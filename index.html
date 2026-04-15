@@ -394,6 +394,37 @@
   }
 
 
+
+  /* ── TABELA DE DADOS ── */
+  .data-tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    margin-top: 4px;
+  }
+  .data-tbl th {
+    color: var(--dourado);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(192,150,75,0.2);
+    text-align: left;
+    background: rgba(192,150,75,0.04);
+  }
+  .data-tbl td {
+    padding: 7px 12px;
+    border-bottom: 1px solid rgba(192,150,75,0.07);
+    color: var(--perola-escura);
+  }
+  .data-tbl tr:hover td { background: rgba(192,150,75,0.04); }
+  .data-tbl td.num { text-align: right; font-weight: bold; }
+  .data-tbl td.fat  { color: var(--dourado); }
+  .data-tbl td.inv  { color: #67b3b6; }
+  .data-tbl td.roas { color: var(--perola); }
+  .data-tbl td:first-child { color: var(--perola-escura); opacity: 0.7; }
+
   /* ── LOGO ── */
   .logo-topo {
     position: fixed;
@@ -651,8 +682,6 @@
 
 <script>
 Chart.register(ChartDataLabels);
-
-// Global datalabels defaults - OFF by default, each chart opts in
 Chart.defaults.set('plugins.datalabels', { display: false });
 
 const meses = ['Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26'];
@@ -672,13 +701,12 @@ const ctr          = [2.05,0.62,0.72,0.94,1.16,1.27,1.76,1.84];
 const freq         = [1.58,3.80,4.98,4.68,4.48,3.55,2.71,2.70];
 const taxaSim      = [44.50,44.75,40.52,37.55];
 
-// Paleta da marca
-const DOURADO     = '#c0964b';
-const DOURADO_L   = '#d4aa6a';
-const VERDE_F     = '#104448';
-const VERDE_FOLHA = '#006d71';
-const PEROLA      = '#f4f0e1';
-const PEROLA_E    = '#c8c3a8';
+const DOURADO   = '#c0964b';
+const DOURADO_L = '#d4aa6a';
+const VERDE_F   = '#104448';
+const VF        = '#006d71';
+const PEROLA    = '#f4f0e1';
+const PEROLA_E  = '#c8c3a8';
 
 Chart.defaults.color = '#8a7a5a';
 Chart.defaults.font.family = "'Special Elite', monospace";
@@ -687,8 +715,28 @@ Chart.defaults.plugins.legend.labels.boxWidth = 10;
 Chart.defaults.plugins.legend.labels.padding = 16;
 Chart.defaults.plugins.legend.labels.color = PEROLA_E;
 
-const grid = { color: 'rgba(192,150,75,0.08)', drawBorder: false };
-const tickStyle = { color: '#8a7a5a' };
+const grid = { color: 'rgba(192,150,75,0.06)', drawBorder: false };
+const ticks = { color: '#8a7a5a' };
+
+// Pill label: fundo escuro + borda dourada — garante legibilidade em qualquer gráfico
+function pill(color, fmt, opts = {}) {
+  return {
+    display: true,
+    backgroundColor: 'rgba(4,21,25,0.88)',
+    borderColor: color + '55',
+    borderWidth: 1,
+    borderRadius: 3,
+    padding: { top: 3, bottom: 3, left: 5, right: 5 },
+    color: color,
+    font: { family: "'Special Elite', monospace", size: 10, weight: 'bold' },
+    align: 'top',
+    anchor: 'center',
+    offset: 10,
+    formatter: fmt,
+    clamp: true,
+    ...opts
+  };
+}
 
 function tip(unit = '') {
   return {
@@ -703,61 +751,89 @@ function tip(unit = '') {
     callbacks: unit ? {
       label: ctx => {
         const v = ctx.parsed.y;
-        if (unit === 'R$') return ` ${ctx.dataset.label}: R$ ${v.toLocaleString('pt-BR', {minimumFractionDigits: 0})}`;
-        if (unit === '%') return ` ${ctx.dataset.label}: ${v}%`;
-        if (unit === 'x') return ` ${ctx.dataset.label}: ${v}x`;
+        if (unit==='R$') return ` ${ctx.dataset.label}: R$ ${v.toLocaleString('pt-BR',{minimumFractionDigits:0})}`;
+        if (unit==='%')  return ` ${ctx.dataset.label}: ${v}%`;
+        if (unit==='x')  return ` ${ctx.dataset.label}: ${v}x`;
         return ` ${ctx.dataset.label}: ${v}`;
       }
     } : {}
   };
 }
 
-// 1. FAT × INV
+// ── 1. FAT × INV  (SEM labels sobrepostas — tabela abaixo substitui) ──────────
 new Chart(document.getElementById('fatInvChart'), {
   type: 'bar',
   data: {
     labels: meses,
     datasets: [
-      { label: 'Faturamento', data: faturamento, backgroundColor: 'rgba(192,150,75,0.65)', borderRadius: 2, order: 2 },
-      { label: 'Investimento', data: investimento, backgroundColor: 'rgba(0,109,113,0.55)', borderRadius: 2, order: 3 },
+      { label: 'Faturamento',  data: faturamento,  backgroundColor: 'rgba(192,150,75,0.65)', borderRadius: 3, order: 2 },
+      { label: 'Investimento', data: investimento, backgroundColor: 'rgba(0,109,113,0.55)',  borderRadius: 3, order: 3 },
       {
         label: 'ROAS', data: roas, type: 'line',
-        borderColor: PEROLA, backgroundColor: 'rgba(244,240,225,0.05)',
-        borderWidth: 2, pointBackgroundColor: PEROLA, pointRadius: 4, pointHoverRadius: 6,
-        tension: 0.35, yAxisID: 'y2', order: 1
+        borderColor: PEROLA, backgroundColor: 'rgba(244,240,225,0.04)',
+        borderWidth: 2, pointBackgroundColor: PEROLA,
+        pointRadius: 5, pointHoverRadius: 7,
+        tension: 0.35, yAxisID: 'y2', order: 1,
+        datalabels: pill(PEROLA, v => v+'x', { align: 'top', offset: 8, font: { size: 9 } })
       }
     ]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 36 } },
     interaction: { mode: 'index', intersect: false },
     plugins: {
-      legend: { position: 'top' }, tooltip: tip(),
+      legend: { position: 'top' },
+      tooltip: tip(),
       datalabels: {
         display: ctx => ctx.datasetIndex < 2,
-        anchor: 'end', align: 'end',
-        color: 'rgba(244,240,225,0.7)',
-        font: { family: "'Special Elite', monospace", size: 9 },
-        formatter: v => v >= 1000000 ? 'R$'+(v/1000000).toFixed(1)+'M' : v >= 1000 ? 'R$'+(v/1000).toFixed(0)+'k' : 'R$'+v,
-        rotation: -45,
-        offset: 2,
-        clamp: true
+        anchor: 'center', align: 'center',
+        rotation: -90,
+        color: ctx => ctx.datasetIndex === 0 ? 'rgba(4,21,25,0.9)' : PEROLA_E,
+        font: { family: "'Special Elite', monospace", size: 9, weight: 'bold' },
+        formatter: v => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'k' : v,
+        clamp: true,
+        textStrokeColor: 'rgba(0,0,0,0.4)',
+        textStrokeWidth: 2
       }
     },
     scales: {
-      x: { grid, ticks: tickStyle },
+      x: { grid, ticks },
       y: {
-        grid, ticks: { ...tickStyle, callback: v => v >= 1000000 ? 'R$'+(v/1000000).toFixed(1)+'M' : v >= 1000 ? 'R$'+(v/1000).toFixed(0)+'k' : 'R$'+v }
+        grid,
+        ticks: { ...ticks, callback: v => v>=1000000?'R$'+(v/1000000).toFixed(1)+'M':v>=1000?'R$'+(v/1000).toFixed(0)+'k':'R$'+v }
       },
       y2: {
         position: 'right', grid: { display: false },
-        ticks: { color: PEROLA_E, callback: v => v+'x' }
+        ticks: { color: '#888', callback: v => v+'x' }
       }
     }
   }
 });
 
-// 2. ROAS
+// Injeta tabela de números abaixo do gráfico principal
+(function() {
+  const wrap = document.getElementById('fatInvChart').closest('.card');
+  const fmt  = (v, prefix='R$') => prefix+(v>=1000000?(v/1000000).toFixed(2)+'M':v>=1000?(v/1000).toFixed(1)+'k':v);
+  const rows = meses.map((m,i) => `
+    <tr>
+      <td>${m}</td>
+      <td class="num fat">${fmt(faturamento[i])}</td>
+      <td class="num inv">${fmt(investimento[i])}</td>
+      <td class="num roas">${roas[i]}x</td>
+    </tr>`).join('');
+  const tbl = document.createElement('div');
+  tbl.innerHTML = `
+    <div style="overflow-x:auto;margin-top:24px">
+      <table class="data-tbl">
+        <thead><tr><th>Mês</th><th>Faturamento</th><th>Investimento</th><th>ROAS</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  wrap.appendChild(tbl);
+})();
+
+// ── 2. ROAS ───────────────────────────────────────────────────────────────────
 new Chart(document.getElementById('roasChart'), {
   type: 'line',
   data: {
@@ -765,100 +841,88 @@ new Chart(document.getElementById('roasChart'), {
     datasets: [{
       label: 'ROAS', data: roas,
       borderColor: DOURADO,
-      backgroundColor: ctx => {
-        const g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
-        g.addColorStop(0,'rgba(192,150,75,0.3)'); g.addColorStop(1,'rgba(192,150,75,0)'); return g;
-      },
+      backgroundColor: ctx => { const g=ctx.chart.ctx.createLinearGradient(0,0,0,280); g.addColorStop(0,'rgba(192,150,75,0.28)'); g.addColorStop(1,'rgba(192,150,75,0)'); return g; },
       borderWidth: 2.5, fill: true, tension: 0.35,
-      pointBackgroundColor: roas.map(v => v>=10?DOURADO_L:v<5?'#8a6a2e':DOURADO),
+      pointBackgroundColor: roas.map(v => v>=10?DOURADO_L:v<5?'#6a4e20':DOURADO),
       pointRadius: 6, pointHoverRadius: 8
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 40, left: 8, right: 8 } },
     plugins: {
       legend: { display: false }, tooltip: tip('x'),
-      datalabels: {
-        display: true,
-        align: ctx => ctx.dataIndex === 8 ? 'left' : 'top',
-        anchor: 'center',
-        color: v => v.dataset.data[v.dataIndex] >= 10 ? '#d4aa6a' : v.dataset.data[v.dataIndex] < 5 ? '#8a6a2e' : '#c0964b',
-        font: { family: "'Special Elite', monospace", size: 10, weight: 'bold' },
-        formatter: v => v+'x'
-      }
+      datalabels: pill(DOURADO, v => v+'x')
     },
     scales: {
-      x: { grid, ticks: tickStyle },
-      y: { grid, ticks: { ...tickStyle, callback: v => v+'x' } }
+      x: { grid, ticks },
+      y: { grid, ticks: { ...ticks, callback: v => v+'x' } }
     }
   }
 });
 
-// 3. CONVERSÃO
+// ── 3. CONVERSÃO ──────────────────────────────────────────────────────────────
 new Chart(document.getElementById('convChart'), {
   type: 'line',
   data: {
     labels: meses,
     datasets: [{
       label: 'Conversão', data: conversao,
-      borderColor: VERDE_FOLHA,
-      backgroundColor: ctx => {
-        const g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
-        g.addColorStop(0,'rgba(0,109,113,0.3)'); g.addColorStop(1,'rgba(0,109,113,0)'); return g;
-      },
+      borderColor: VF,
+      backgroundColor: ctx => { const g=ctx.chart.ctx.createLinearGradient(0,0,0,280); g.addColorStop(0,'rgba(0,109,113,0.28)'); g.addColorStop(1,'rgba(0,109,113,0)'); return g; },
       borderWidth: 2.5, fill: true, tension: 0.35,
-      pointBackgroundColor: VERDE_FOLHA, pointRadius: 5, pointHoverRadius: 7
+      pointBackgroundColor: VF, pointRadius: 5, pointHoverRadius: 7
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 40, left: 8, right: 8 } },
     plugins: {
       legend: { display: false }, tooltip: tip('%'),
-      datalabels: {
-        display: true, align: 'top', anchor: 'center',
-        color: '#006d71',
-        font: { family: "'Special Elite', monospace", size: 10, weight: 'bold' },
-        formatter: v => v+'%'
-      }
+      datalabels: pill(VF, v => v+'%')
     },
     scales: {
-      x: { grid, ticks: tickStyle },
-      y: { grid, ticks: { ...tickStyle, callback: v => v+'%' } }
+      x: { grid, ticks },
+      y: { grid, ticks: { ...ticks, callback: v => v+'%' } }
     }
   }
 });
 
-// 4. FICHAS
+// ── 4. FICHAS ─────────────────────────────────────────────────────────────────
 new Chart(document.getElementById('fichasChart'), {
   type: 'bar',
   data: {
     labels: meses,
     datasets: [{
       label: 'Fichas', data: fichas,
-      backgroundColor: fichas.map(v => `rgba(0,109,113,${0.3 + 0.65 * v / Math.max(...fichas)})`),
-      borderRadius: 2
+      backgroundColor: fichas.map(v => `rgba(0,109,113,${0.3+0.65*v/Math.max(...fichas)})`),
+      borderRadius: 3
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 10 } },
     plugins: {
       legend: { display: false }, tooltip: tip(),
       datalabels: {
-        display: true, anchor: 'end', align: 'end',
-        color: 'rgba(244,240,225,0.65)',
-        font: { family: "'Special Elite', monospace", size: 9 },
+        display: true,
+        anchor: 'center', align: 'center', rotation: -90,
+        color: PEROLA,
+        font: { family: "'Special Elite', monospace", size: 9, weight: 'bold' },
         formatter: v => v>=1000?(v/1000).toFixed(1)+'k':v,
-        rotation: -45, clamp: true, offset: 2
+        clamp: true,
+        textStrokeColor: 'rgba(0,0,0,0.5)',
+        textStrokeWidth: 2
       }
     },
     scales: {
-      x: { grid, ticks: tickStyle },
-      y: { grid, ticks: { ...tickStyle, callback: v => v>=1000?(v/1000).toFixed(0)+'k':v } }
+      x: { grid, ticks },
+      y: { grid, ticks: { ...ticks, callback: v => v>=1000?(v/1000).toFixed(0)+'k':v } }
     }
   }
 });
 
-// 5. CUSTO FICHA
+// ── 5. CUSTO/FICHA ────────────────────────────────────────────────────────────
 new Chart(document.getElementById('custoFichaChart'), {
   type: 'line',
   data: {
@@ -866,64 +930,71 @@ new Chart(document.getElementById('custoFichaChart'), {
     datasets: [{
       label: 'Custo/Ficha', data: custoFicha,
       borderColor: DOURADO,
-      backgroundColor: ctx => {
-        const g = ctx.chart.ctx.createLinearGradient(0,0,0,300);
-        g.addColorStop(0,'rgba(192,150,75,0.25)'); g.addColorStop(1,'rgba(192,150,75,0)'); return g;
-      },
+      backgroundColor: ctx => { const g=ctx.chart.ctx.createLinearGradient(0,0,0,280); g.addColorStop(0,'rgba(192,150,75,0.22)'); g.addColorStop(1,'rgba(192,150,75,0)'); return g; },
       borderWidth: 2.5, fill: true, tension: 0.35,
-      pointBackgroundColor: custoFicha.map(v => v<=5?VERDE_FOLHA:v>=13?'#8a6a2e':DOURADO),
+      pointBackgroundColor: custoFicha.map(v => v<=5?VF:v>=13?'#6a4e20':DOURADO),
       pointRadius: 6, pointHoverRadius: 8
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 40, left: 8, right: 8 } },
     plugins: {
       legend: { display: false }, tooltip: tip('R$'),
       datalabels: {
-        display: true, align: 'top', anchor: 'center',
-        color: ctx => ctx.dataset.data[ctx.dataIndex] <= 5 ? '#006d71' : ctx.dataset.data[ctx.dataIndex] >= 13 ? '#8a6a2e' : '#c0964b',
+        display: true,
+        backgroundColor: 'rgba(4,21,25,0.88)',
+        borderColor: ctx => { const v=ctx.dataset.data[ctx.dataIndex]; return (v<=5?VF:v>=13?'#6a4e20':DOURADO)+'88'; },
+        borderWidth: 1, borderRadius: 3,
+        padding: { top:3, bottom:3, left:5, right:5 },
+        color: ctx => { const v=ctx.dataset.data[ctx.dataIndex]; return v<=5?VF:v>=13?'#c07a30':DOURADO; },
         font: { family: "'Special Elite', monospace", size: 10, weight: 'bold' },
-        formatter: v => 'R$'+v
+        align: 'top', anchor: 'center', offset: 10,
+        formatter: v => 'R$'+v, clamp: true
       }
     },
     scales: {
-      x: { grid, ticks: tickStyle },
-      y: { grid, ticks: { ...tickStyle, callback: v => 'R$ '+v } }
+      x: { grid, ticks },
+      y: { grid, ticks: { ...ticks, callback: v => 'R$'+v } }
     }
   }
 });
 
-// 6. VENDAS
+// ── 6. VENDAS ─────────────────────────────────────────────────────────────────
 new Chart(document.getElementById('vendasChart'), {
   type: 'bar',
   data: {
     labels: meses,
     datasets: [{
       label: 'Vendas', data: vendas,
-      backgroundColor: vendas.map(v => `rgba(192,150,75,${0.3 + 0.7 * v / Math.max(...vendas)})`),
-      borderRadius: 2
+      backgroundColor: vendas.map(v => `rgba(192,150,75,${0.3+0.7*v/Math.max(...vendas)})`),
+      borderRadius: 3
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 10 } },
     plugins: {
       legend: { display: false }, tooltip: tip(),
       datalabels: {
-        display: true, anchor: 'end', align: 'end',
-        color: 'rgba(244,240,225,0.7)',
-        font: { family: "'Special Elite', monospace", size: 10 },
+        display: true,
+        anchor: 'center', align: 'center', rotation: -90,
+        color: 'rgba(4,21,25,0.9)',
+        font: { family: "'Special Elite', monospace", size: 10, weight: 'bold' },
         formatter: v => v,
-        clamp: true
+        clamp: true,
+        textStrokeColor: 'rgba(0,0,0,0.3)',
+        textStrokeWidth: 1
       }
     },
     scales: {
-      x: { grid, ticks: tickStyle },
-      y: { grid, ticks: tickStyle }
+      x: { grid, ticks },
+      y: { grid, ticks }
     }
   }
 });
 
-// 7. CPM
+// ── 7. CPM ────────────────────────────────────────────────────────────────────
 new Chart(document.getElementById('cpmChart'), {
   type: 'line',
   data: {
@@ -937,53 +1008,45 @@ new Chart(document.getElementById('cpmChart'), {
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 38, left: 6, right: 6 } },
     plugins: {
       legend: { display: false }, tooltip: tip('R$'),
-      datalabels: {
-        display: true, align: 'top', anchor: 'center',
-        color: '#c0964b',
-        font: { family: "'Special Elite', monospace", size: 10 },
-        formatter: v => 'R$'+v
-      }
+      datalabels: pill(DOURADO, v => 'R$'+v)
     },
     scales: {
-      x: { grid, ticks: { ...tickStyle, maxRotation: 45 } },
-      y: { grid, ticks: { ...tickStyle, callback: v => 'R$'+v } }
+      x: { grid, ticks: { ...ticks, maxRotation: 40 } },
+      y: { grid, ticks: { ...ticks, callback: v => 'R$'+v } }
     }
   }
 });
 
-// 8. CPC
+// ── 8. CPC ────────────────────────────────────────────────────────────────────
 new Chart(document.getElementById('cpcChart'), {
   type: 'line',
   data: {
     labels: meses8,
     datasets: [{
       label: 'CPC', data: cpc,
-      borderColor: VERDE_FOLHA, backgroundColor: 'rgba(0,109,113,0.08)',
+      borderColor: VF, backgroundColor: 'rgba(0,109,113,0.08)',
       borderWidth: 2, fill: true, tension: 0.3,
-      pointBackgroundColor: VERDE_FOLHA, pointRadius: 5
+      pointBackgroundColor: VF, pointRadius: 5
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 38, left: 6, right: 6 } },
     plugins: {
       legend: { display: false }, tooltip: tip('R$'),
-      datalabels: {
-        display: true, align: 'top', anchor: 'center',
-        color: '#006d71',
-        font: { family: "'Special Elite', monospace", size: 10 },
-        formatter: v => 'R$'+v
-      }
+      datalabels: pill(VF, v => 'R$'+v)
     },
     scales: {
-      x: { grid, ticks: { ...tickStyle, maxRotation: 45 } },
-      y: { grid, ticks: { ...tickStyle, callback: v => 'R$'+v } }
+      x: { grid, ticks: { ...ticks, maxRotation: 40 } },
+      y: { grid, ticks: { ...ticks, callback: v => 'R$'+v } }
     }
   }
 });
 
-// 9. CTR
+// ── 9. CTR ────────────────────────────────────────────────────────────────────
 new Chart(document.getElementById('ctrChart'), {
   type: 'line',
   data: {
@@ -997,23 +1060,19 @@ new Chart(document.getElementById('ctrChart'), {
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 38, left: 6, right: 6 } },
     plugins: {
       legend: { display: false }, tooltip: tip('%'),
-      datalabels: {
-        display: true, align: 'top', anchor: 'center',
-        color: '#c8c3a8',
-        font: { family: "'Special Elite', monospace", size: 10 },
-        formatter: v => v+'%'
-      }
+      datalabels: pill(PEROLA_E, v => v+'%')
     },
     scales: {
-      x: { grid, ticks: { ...tickStyle, maxRotation: 45 } },
-      y: { grid, ticks: { ...tickStyle, callback: v => v+'%' } }
+      x: { grid, ticks: { ...ticks, maxRotation: 40 } },
+      y: { grid, ticks: { ...ticks, callback: v => v+'%' } }
     }
   }
 });
 
-// 10. FREQUÊNCIA
+// ── 10. FREQUÊNCIA ────────────────────────────────────────────────────────────
 new Chart(document.getElementById('freqChart'), {
   type: 'bar',
   data: {
@@ -1021,28 +1080,33 @@ new Chart(document.getElementById('freqChart'), {
     datasets: [{
       label: 'Frequência', data: freq,
       backgroundColor: freq.map(v => v>=4?'rgba(138,106,46,0.85)':v>=3?'rgba(192,150,75,0.65)':'rgba(0,109,113,0.65)'),
-      borderRadius: 2
+      borderRadius: 3
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 10 } },
     plugins: {
       legend: { display: false }, tooltip: tip('x'),
       datalabels: {
-        display: true, anchor: 'end', align: 'end',
-        color: 'rgba(244,240,225,0.75)',
-        font: { family: "'Special Elite', monospace", size: 11, weight: 'bold' },
-        formatter: v => v+'x', clamp: true
+        display: true,
+        anchor: 'center', align: 'center',
+        color: PEROLA,
+        font: { family: "'Special Elite', monospace", size: 12, weight: 'bold' },
+        formatter: v => v+'x',
+        clamp: true,
+        textStrokeColor: 'rgba(0,0,0,0.5)',
+        textStrokeWidth: 2
       }
     },
     scales: {
-      x: { grid, ticks: tickStyle },
-      y: { grid, max: 6, ticks: { ...tickStyle, callback: v => v+'x' } }
+      x: { grid, ticks },
+      y: { grid, max: 6, ticks: { ...ticks, callback: v => v+'x' } }
     }
   }
 });
 
-// 11. TAXA SIM
+// ── 11. TAXA SIM ──────────────────────────────────────────────────────────────
 new Chart(document.getElementById('taxaSimChart'), {
   type: 'line',
   data: {
@@ -1050,29 +1114,21 @@ new Chart(document.getElementById('taxaSimChart'), {
     datasets: [{
       label: 'Taxa Sim Terapia', data: taxaSim,
       borderColor: DOURADO,
-      backgroundColor: ctx => {
-        const g = ctx.chart.ctx.createLinearGradient(0,0,0,200);
-        g.addColorStop(0,'rgba(192,150,75,0.3)'); g.addColorStop(1,'rgba(192,150,75,0)'); return g;
-      },
+      backgroundColor: ctx => { const g=ctx.chart.ctx.createLinearGradient(0,0,0,160); g.addColorStop(0,'rgba(192,150,75,0.28)'); g.addColorStop(1,'rgba(192,150,75,0)'); return g; },
       borderWidth: 3, fill: true, tension: 0.3,
-      pointBackgroundColor: DOURADO, pointRadius: 8, pointHoverRadius: 10
+      pointBackgroundColor: DOURADO, pointRadius: 9, pointHoverRadius: 11
     }]
   },
   options: {
     responsive: true,
+    layout: { padding: { top: 44, left: 16, right: 16 } },
     plugins: {
       legend: { display: false }, tooltip: tip('%'),
-      datalabels: {
-        display: true, align: 'top', anchor: 'center',
-        color: '#c0964b',
-        font: { family: "'Special Elite', monospace", size: 12, weight: 'bold' },
-        formatter: v => v+'%',
-        offset: 8
-      }
+      datalabels: pill(DOURADO, v => v+'%', { font: { size: 13, weight: 'bold' }, offset: 12 })
     },
     scales: {
-      x: { grid, ticks: tickStyle },
-      y: { grid, min: 30, max: 50, ticks: { ...tickStyle, callback: v => v+'%' } }
+      x: { grid, ticks },
+      y: { grid, min: 33, max: 48, ticks: { ...ticks, callback: v => v+'%' } }
     }
   }
 });
