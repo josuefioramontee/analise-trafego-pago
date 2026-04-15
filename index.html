@@ -707,12 +707,7 @@ new Chart(document.getElementById('fatInvChart'), {
     datasets: [
       { label: 'Faturamento', data: faturamento, backgroundColor: 'rgba(192,150,75,0.65)', borderRadius: 2, order: 2 },
       { label: 'Investimento', data: investimento, backgroundColor: 'rgba(0,109,113,0.55)', borderRadius: 2, order: 3 },
-      {
-        label: 'ROAS', data: roas, type: 'line',
-        borderColor: PEROLA, backgroundColor: 'rgba(244,240,225,0.05)',
-        borderWidth: 2, pointBackgroundColor: PEROLA, pointRadius: 4, pointHoverRadius: 6,
-        tension: 0.35, yAxisID: 'y2', order: 1
-      }
+
     ]
   },
   options: {
@@ -724,10 +719,7 @@ new Chart(document.getElementById('fatInvChart'), {
       y: {
         grid, ticks: { ...tickStyle, callback: v => v >= 1000000 ? 'R$'+(v/1000000).toFixed(1)+'M' : v >= 1000 ? 'R$'+(v/1000).toFixed(0)+'k' : 'R$'+v }
       },
-      y2: {
-        position: 'right', grid: { display: false },
-        ticks: { color: PEROLA_E, callback: v => v+'x' }
-      }
+
     }
   }
 });
