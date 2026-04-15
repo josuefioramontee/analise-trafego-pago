@@ -475,17 +475,17 @@
     </div>
     <div class="kpi">
       <div class="kpi-num">03</div>
-      <div class="kpi-valor">R$ 6,95M</div>
+      <div class="kpi-valor">R$ 7,02M</div>
       <div class="kpi-label">Faturamento</div>
     </div>
     <div class="kpi">
       <div class="kpi-num">04</div>
-      <div class="kpi-valor">2.804</div>
+      <div class="kpi-valor">2.831</div>
       <div class="kpi-label">Vendas</div>
     </div>
     <div class="kpi">
       <div class="kpi-num">05</div>
-      <div class="kpi-valor">7,24x</div>
+      <div class="kpi-valor">7,87x</div>
       <div class="kpi-label">ROAS Médio</div>
     </div>
     <div class="kpi">
@@ -574,7 +574,7 @@
   </div>
 
   <!-- MÍDIA -->
-  <div class="sep"><span class="sep-text">III — Métricas de Mídia · Mai–Dez/25</span><span class="sep-line"></span></div>
+  <div class="sep"><span class="sep-text">III — Métricas de Mídia · Mai/25–Abr/26</span><span class="sep-line"></span></div>
 
   <div class="grid-3">
     <div class="card">
@@ -685,20 +685,20 @@ Chart.register(ChartDataLabels);
 Chart.defaults.set('plugins.datalabels', { display: false });
 
 const meses = ['Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26'];
-const meses8 = ['Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25'];
+const meses8 = meses; // agora todos os 12 meses
 const meses4 = ['Jan/26','Fev/26','Mar/26','Abr/26'];
 
 const investimento = [1495.95,27779.46,101837.18,169761.90,258680.96,183471.33,61510.32,56376.19,19752.13,61364.88,203532.69,104299.11];
-const faturamento  = [12400,218240,868000,1170560,736560,558000,724160,319920,535680,429040,1145760,235600];
+const faturamento  = [12400,218240,895280,1190400,736560,572880,714240,453840,436480,429040,1135840,225680];
 const fichas       = [196,3558,11556,16453,24155,25638,13904,5951,4508,6869,13062,6976];
 const custoFicha   = [7.61,7.81,8.80,10.32,10.71,7.16,4.42,9.47,4.38,8.93,15.58,14.95];
-const vendas       = [5,88,350,472,297,225,292,129,216,173,462,95];
-const conversao    = [2.55,2.67,3.07,2.87,1.25,0.88,2.11,2.18,4.79,2.13,3.54,1.36];
-const roas         = [8.29,7.86,8.52,6.90,2.85,3.04,11.77,5.67,27.12,6.99,5.63,2.26];
-const cpm          = [14.83,16.26,19.55,26.88,22.64,22.54,24.71,24.15];
-const cpc          = [0.72,2.62,2.73,2.87,1.95,1.78,1.40,1.32];
-const ctr          = [2.05,0.62,0.72,0.94,1.16,1.27,1.76,1.84];
-const freq         = [1.58,3.80,4.98,4.68,4.48,3.55,2.71,2.70];
+const vendas       = [5,88,361,480,297,231,288,183,176,173,458,91];
+const conversao    = [2.55,2.47,3.12,2.91,1.25,0.90,2.07,3.07,3.90,2.51,3.50,1.30];
+const roas         = [8.29,7.86,8.79,7.01,2.85,3.12,11.61,8.05,22.10,6.99,5.58,2.16];
+const cpm          = [14.83,16.26,19.55,26.88,22.64,22.54,24.71,24.15,32.68,41.37,37.74,29.10];
+const cpc          = [0.72,2.62,2.73,2.87,1.95,1.78,1.40,1.32,1.51,1.99,1.89,1.60];
+const ctr          = [2.05,0.62,0.72,0.94,1.16,1.27,1.76,1.84,2.17,2.08,1.99,1.82];
+const freq         = [1.58,3.80,4.98,4.68,4.48,3.55,2.71,2.70,2.35,2.29,3.56,3.07];
 const taxaSim      = [44.50,44.75,40.52,37.55];
 
 const DOURADO   = '#c0964b';
