@@ -122,12 +122,12 @@ body{background:var(--bg);color:var(--pearl);font-family:'Spectral',Georgia,seri
   <div class="card">
     <div class="ctitle">Evolução do ROAS</div>
     <div class="csub">Retorno sobre investimento</div>
-    <canvas id="c2" height="200"></canvas>
+    <canvas id="c2" height="240"></canvas>
   </div>
   <div class="card">
     <div class="ctitle">Conversão das Fichas</div>
     <div class="csub">Taxa ficha → venda (%)</div>
-    <canvas id="c3" height="200"></canvas>
+    <canvas id="c3" height="240"></canvas>
   </div>
 </div>
 
@@ -142,7 +142,7 @@ body{background:var(--bg);color:var(--pearl);font-family:'Spectral',Georgia,seri
   <div class="card">
     <div class="ctitle">Custo por Ficha</div>
     <div class="csub">Eficiência de captação em R$</div>
-    <canvas id="c5" height="200"></canvas>
+    <canvas id="c5" height="240"></canvas>
   </div>
 </div>
 
@@ -165,12 +165,12 @@ body{background:var(--bg);color:var(--pearl);font-family:'Spectral',Georgia,seri
   <div class="card">
     <div class="ctitle">CPM</div>
     <div class="csub">Custo por mil impressões (R$)</div>
-    <canvas id="c8" height="200"></canvas>
+    <canvas id="c8" height="240"></canvas>
   </div>
   <div class="card">
     <div class="ctitle">CPC</div>
     <div class="csub">Custo por clique (R$)</div>
-    <canvas id="c9" height="200"></canvas>
+    <canvas id="c9" height="240"></canvas>
   </div>
 </div>
 
@@ -178,7 +178,7 @@ body{background:var(--bg);color:var(--pearl);font-family:'Spectral',Georgia,seri
   <div class="card">
     <div class="ctitle">CTR</div>
     <div class="csub">Taxa de clique (%)</div>
-    <canvas id="c10" height="200"></canvas>
+    <canvas id="c10" height="240"></canvas>
   </div>
   <div class="card">
     <div class="ctitle">Frequência</div>
@@ -206,7 +206,7 @@ body{background:var(--bg);color:var(--pearl);font-family:'Spectral',Georgia,seri
 <script>
 Chart.register(ChartDataLabels);
 Chart.defaults.set('plugins.datalabels',{display:false});
-Chart.defaults.layout={padding:{top:28,left:6,right:6,bottom:4}};
+Chart.defaults.layout={padding:{top:36,left:8,right:8,bottom:8}};
 
 const M=['Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26'];
 const inv  = [1495.95,27779.46,101837.18,169761.90,258680.96,183471.33,61510.32,56376.19,19752.13,61364.88,203532.69,104299.11];
@@ -249,14 +249,22 @@ const tip=(u='')=>({
   }}:{}
 });
 
-// Smart alternating labels for line charts (avoids overlap)
+// Smart slope-based labels: peak=top, valley=bottom, slope-aware
 const lineDL=(color,fmt)=>({
   display:true,
   color:color,
   font:{family:"'Special Elite',monospace",size:9,weight:'bold'},
-  align: ctx => ctx.dataIndex%2===0 ? 'top' : 'bottom',
+  align: ctx => {
+    const d=ctx.dataset.data, i=ctx.dataIndex, n=d.length;
+    const prev = i>0   ? d[i-1] : d[i];
+    const next = i<n-1 ? d[i+1] : d[i];
+    // peak → top; valley → bottom; rising → bottom; falling → top
+    if(d[i]>=prev && d[i]>=next) return 'top';
+    if(d[i]<=prev && d[i]<=next) return 'bottom';
+    return d[i]>=prev ? 'top' : 'bottom';
+  },
   anchor:'center',
-  offset: 10,
+  offset:12,
   formatter:fmt,
   clamp:true
 });
