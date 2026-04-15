@@ -284,9 +284,17 @@ new Chart(document.getElementById('c1'),{
     {label:'Investimento', data:inv, backgroundColor:'rgba(0,109,113,0.55)', borderRadius:4, order:2}
   ]},
   options:{responsive:true,interaction:{mode:'index',intersect:false},
+    layout:{padding:{top:36,left:6,right:6,bottom:4}},
     plugins:{
       legend:{position:'top'},tooltip:tip('R$'),
-      datalabels:barDL(P, v=>v>=1e6?(v/1e6).toFixed(2)+'M':v>=1000?(v/1000).toFixed(0)+'k':'R$'+v)
+      datalabels:{
+        display:true,
+        anchor:'end', align:'end',
+        color:ctx=>ctx.datasetIndex===0?GL:PE,
+        font:{family:"'Special Elite',monospace",size:12,weight:'bold'},
+        formatter:v=>v>=1e6?(v/1e6).toFixed(2)+'M':v>=1000?(v/1000).toFixed(0)+'k':'R$'+v,
+        clamp:true
+      }
     },
     scales:{
       x:{grid,ticks:tx},
