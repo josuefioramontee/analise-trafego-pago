@@ -342,8 +342,15 @@ new Chart(document.getElementById('c4'),{
     backgroundColor:fich.map(v=>`rgba(0,109,113,${0.3+0.65*v/Math.max(...fich)})`)
   }]},
   options:{responsive:true,
+    layout:{padding:{top:36,left:6,right:6,bottom:4}},
     plugins:{legend:{display:false},tooltip:tip(),
-      datalabels:barDL(P,v=>v>=1000?(v/1000).toFixed(1)+'k':v)},
+      datalabels:{
+        display:true, anchor:'end', align:'end',
+        color:PE,
+        font:{family:"'Special Elite',monospace",size:12,weight:'bold'},
+        formatter:v=>v>=1000?(v/1000).toFixed(1)+'k':v,
+        clamp:true
+      }},
     scales:{x:{grid,ticks:tx},y:{grid,ticks:{...tx,callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}}}
   }
 });
@@ -372,8 +379,15 @@ new Chart(document.getElementById('c6'),{
     backgroundColor:vend.map(v=>`rgba(192,150,75,${0.3+0.7*v/Math.max(...vend)})`)
   }]},
   options:{responsive:true,
+    layout:{padding:{top:36,left:6,right:6,bottom:4}},
     plugins:{legend:{display:false},tooltip:tip(),
-      datalabels:barDL('rgba(4,21,25,0.9)',v=>v)},
+      datalabels:{
+        display:true, anchor:'end', align:'end',
+        color:GL,
+        font:{family:"'Special Elite',monospace",size:12,weight:'bold'},
+        formatter:v=>v,
+        clamp:true
+      }},
     scales:{x:{grid,ticks:tx},y:{grid,ticks:tx}}
   }
 });
@@ -454,10 +468,11 @@ new Chart(document.getElementById('c11'),{
   options:{responsive:true,
     plugins:{legend:{display:false},tooltip:tip('x'),
       datalabels:{
-        display:true,color:P,anchor:'center',align:'center',
-        font:{family:"'Special Elite',monospace",size:11,weight:'bold'},
-        formatter:v=>v+'x',clamp:true,
-        textStrokeColor:'rgba(0,0,0,0.5)',textStrokeWidth:2
+        display:true, anchor:'end', align:'end',
+        color:P,
+        font:{family:"'Special Elite',monospace",size:12,weight:'bold'},
+        formatter:v=>v+'x',
+        clamp:true
       }},
     scales:{x:{grid,ticks:tx},y:{grid,max:6,ticks:{...tx,callback:v=>v+'x'}}}
   }
