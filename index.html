@@ -102,11 +102,11 @@ body{background:var(--bg);color:var(--pearl);font-family:'Spectral',Georgia,seri
 </div>
 
 <div class="kpis">
-  <div class="kpi"><div class="kpi-n">01</div><div class="kpi-v">R$ 1,25M</div><div class="kpi-l">Total Investido</div></div>
+  <div class="kpi"><div class="kpi-n">01</div><div class="kpi-v">R$ 1,56M</div><div class="kpi-l">Total Investido</div></div>
   <div class="kpi"><div class="kpi-n">02</div><div class="kpi-v">133.246</div><div class="kpi-l">Fichas Geradas</div></div>
   <div class="kpi"><div class="kpi-n">03</div><div class="kpi-v">R$ 7,02M</div><div class="kpi-l">Faturamento</div></div>
   <div class="kpi"><div class="kpi-n">04</div><div class="kpi-v">2.831</div><div class="kpi-l">Vendas</div></div>
-  <div class="kpi"><div class="kpi-n">05</div><div class="kpi-v">7,87x</div><div class="kpi-l">ROAS Médio</div></div>
+  <div class="kpi"><div class="kpi-n">05</div><div class="kpi-v">6,41x</div><div class="kpi-l">ROAS Médio</div></div>
   <div class="kpi"><div class="kpi-n">06</div><div class="kpi-v">R$ 9,43</div><div class="kpi-l">Custo / Ficha</div></div>
 </div>
 
@@ -209,9 +209,9 @@ Chart.defaults.set('plugins.datalabels',{display:false});
 Chart.defaults.layout={padding:{top:36,left:8,right:8,bottom:8}};
 
 const M=['Mai/25','Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26'];
-const inv  = [1495.95,27779.46,101837.18,169761.90,258680.96,183471.33,61510.32,56376.19,19752.13,61364.88,203532.69,104299.11];
+const inv  = [1495.95,27779.46,180232.00,240133.00,316980.00,224189.00,87699.00,75910.00,24469.00,68648.00,203532.69,104299.11];
 const fat  = [12400,218240,895280,1190400,736560,572880,714240,453840,436480,429040,1135840,225680];
-const roas = [8.29,7.86,8.79,7.01,2.85,3.12,11.61,8.05,22.10,6.99,5.58,2.16];
+const roas = [8.29,7.86,4.97,4.96,2.32,2.56,8.14,5.98,17.84,6.25,5.58,2.16];
 const fich = [196,3558,11556,16453,24155,25638,13904,5951,4508,6869,13062,6976];
 const cpf  = [7.61,7.81,8.80,10.32,10.71,7.16,4.42,9.47,4.38,8.93,15.58,14.95];
 const vend = [5,88,361,480,297,231,288,183,176,173,458,91];
@@ -220,7 +220,7 @@ const cpm  = [14.83,16.26,19.55,26.88,22.64,22.54,24.71,24.15,32.68,41.37,37.74,
 const cpc  = [0.72,2.62,2.73,2.87,1.95,1.78,1.40,1.32,1.51,1.99,1.89,1.60];
 const ctr  = [2.05,0.62,0.72,0.94,1.16,1.27,1.76,1.84,2.17,2.08,1.99,1.82];
 const freq = [1.58,3.80,4.98,4.68,4.48,3.55,2.71,2.70,2.35,2.29,3.56,3.07];
-const tsim = [44.50,44.75,40.52,37.55];
+const tsim = [58.57,53.07,51.14,45.75,41.85,33.37,40.06,42.86,44.50,44.75,40.52,37.55];
 const M4   = ['Jan/26','Fev/26','Mar/26','Abr/26'];
 
 const G='#c0964b',GL='#d4aa6a',T='#006d71',P='#f4f0e1',PE='#c8c3a8';
@@ -403,7 +403,7 @@ new Chart(document.getElementById('c6'),{
 // ── C7: TAXA SIM ─────────────────────────────────────────────────────────────
 new Chart(document.getElementById('c7'),{
   type:'line',
-  data:{labels:M4,datasets:[{
+  data:{labels:M,datasets:[{
     label:'Taxa Sim',data:tsim,borderColor:G,borderWidth:3,tension:0.3,fill:true,
     backgroundColor:ctx=>lgrad(ctx,G),
     pointBackgroundColor:G,pointRadius:9,pointHoverRadius:11
@@ -417,7 +417,7 @@ new Chart(document.getElementById('c7'),{
         align:'top',anchor:'center',offset:12,
         formatter:v=>v+'%',clamp:true
       }},
-    scales:{x:{grid,ticks:tx},y:{grid,min:34,max:48,ticks:{...tx,callback:v=>v+'%'}}}
+    scales:{x:{grid,ticks:{...tx,maxRotation:35}},y:{grid,min:28,max:64,ticks:{...tx,callback:v=>v+'%'}}}
   }
 });
 
